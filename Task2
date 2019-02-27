@@ -1,0 +1,38 @@
+package test.assignment
+
+ import org.apache.spark._
+ import org.apache.spark.sql.DataFrame
+ import org.apache.spark.sql.Row
+ import org.apache.spark.sql.Dataset
+ import org.apache.hadoop.fs.Path
+ import org.apache.spark.sql.SparkSession
+
+object Task {
+
+  def main(args: Array[String]): Unit={
+    System.getProperties().setProperty("hadoop.home.dir","C:\\winutils")
+
+    val spark = SparkSession.builder()
+      .appName("Task2")
+      .master("local")
+      .enableHiveSupport()
+      .getOrCreate()
+
+    val df = spark.read.json("https://s3-eu-west-1.amazonaws.com/dwh-test-resources/recipes.json").toDF()
+    val df2 = df.distinct.filter(df("name")==="Easter Leftover Sandwich")
+
+    println("Printing DataFrame:");
+	
+    df2.show()
+    df2.printSchema()
+
+    df.createOrReplaceTempView("ingredients")
+    var data= spark.sql("select * from ingredients")
+
+    println("Printing ingredients table data:")
+
+    data.write.saveAsTable("ingredients")
+    data.show()
+    spark.close()
+  }
+}
