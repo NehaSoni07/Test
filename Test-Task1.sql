@@ -1,5 +1,4 @@
 DROP VIEW IF EXISTS vw_ingredient_curr_state;
-
 CREATE VIEW vw_ingredient_curr_state 
 AS 
   SELECT id_ingredient, 
